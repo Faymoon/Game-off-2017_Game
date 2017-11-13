@@ -4,6 +4,7 @@
 #include <Nazara/Graphics.hpp>
 #include <Nazara/Renderer.hpp>
 #include <Nazara/Utility.hpp>
+#include <Nazara/Physics2D.hpp>
 #include <NDK/Application.hpp>
 #include <NDK/Components.hpp>
 #include <NDK/Systems.hpp>
@@ -23,6 +24,8 @@ int main()
 	Ndk::World& world = app.AddWorld();
 	world.GetSystem<Ndk::RenderSystem>().SetGlobalUp(Nz::Vector3f::Down());
 
+	world.AddSystem<Ndk::PhysicsSystem2D>();
+
 	Ndk::EntityHandle camEntity = world.CreateEntity();
 	Ndk::NodeComponent& cam = camEntity->AddComponent<Ndk::NodeComponent>();
 	
@@ -30,7 +33,13 @@ int main()
 	camComp.SetTarget(&win);
 	camComp.SetProjectionType(Nz::ProjectionType_Orthogonal);
 
-	Nz::LuaInstance lua;
+	auto solEntity = world.CreateEntity();
+	solEntity->AddComponent<Ndk::NodeComponent>().SetPosition(Nz::Vector3f(0, 500, 0));
+
+	Nz::BoxCollider2DRef collider{ Nz::BoxCollider2D::New(Nz::Vector2f(100, 500)) };
+	solEntity->AddComponent<Ndk::CollisionComponent2D>().SetGeom(collider);
+
+	Nz::LuaInstance lua{};
 
 	SkillList::Init(lua);
 	SkillList skills{ lua };
