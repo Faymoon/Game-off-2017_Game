@@ -2,8 +2,11 @@
 
 
 
-Skill::Skill(Nz::LuaInstance& luaRef, const Nz::String luaFunc, Ndk::EntityHandle entity, Ndk::EntityHandle parent)
+Skill::Skill(Nz::LuaInstance & luaRef, const Nz::String luaFunc, Ndk::EntityHandle entity, Ndk::EntityHandle parent, Skill::Type type, int level)
 	:
+	m_type{ type },
+	m_level{ level },
+
 	m_entity{ entity },
 	m_parent{ parent },
 
@@ -15,7 +18,6 @@ Skill::Skill(Nz::LuaInstance& luaRef, const Nz::String luaFunc, Ndk::EntityHandl
 {
 }
 
-
 Skill::~Skill()
 {
 }
@@ -25,9 +27,10 @@ void Skill::Update(float delta)
 {
 	lua.GetGlobal(m_luaFunc);
 	lua.Push(delta);
+	lua.Push(m_level);
 	lua.Push(m_entity);
 	lua.Push(m_parent);
-	lua.Call(3, 0);
+	lua.Call(4, 0);
 }
 
 SkillList::SkillList(Nz::LuaInstance & luaRef)
@@ -38,9 +41,9 @@ SkillList::SkillList(Nz::LuaInstance & luaRef)
 {
 }
 
-void SkillList::AddSkill(const Nz::String luaFunc, const Ndk::EntityHandle entity, const Ndk::EntityHandle parent)
+void SkillList::AddSkill(const Nz::String luaFunc, const Ndk::EntityHandle entity, const Ndk::EntityHandle parent, Skill::Type type, int level)
 {
-	push_back(Skill(lua, luaFunc, entity, parent));
+	push_back(Skill(lua, luaFunc, entity, parent, type, level));
 }
 
 
