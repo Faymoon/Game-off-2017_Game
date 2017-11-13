@@ -20,14 +20,28 @@ class SkillList;
 using SkillHandle = Nz::ObjectHandle<Skill>;
 using SkillListHandle = Nz::ObjectHandle<SkillList>;
 
+
 class Skill : public Nz::HandledObject<Skill>
 {
 	public:
-		Skill(Nz::LuaInstance& luaRef, const Nz::String luaFunc, Ndk::EntityHandle entity, Ndk::EntityHandle parent);
+		enum class Type
+		{
+			FIREBALL,
+			SHIELD,
+			HEALTH,
+			DASH,
+			ICEBALL,
+			FLY
+		};
+
+		Skill(Nz::LuaInstance & luaRef, const Nz::String luaFunc, Ndk::EntityHandle entity, Ndk::EntityHandle parent, Skill::Type type, int level);
 		~Skill();
 
 		void Update(const float delta);
 	private:
+		Type m_type;
+		int m_level;
+
 		Ndk::EntityHandle m_parent;
 
 		Ndk::EntityHandle m_entity;
@@ -45,7 +59,7 @@ class SkillList : public std::vector<Skill>, public Nz::HandledObject<SkillList>
 	public:
 		SkillList(Nz::LuaInstance & luaRef);
 
-		void AddSkill(const Nz::String luaFunc, const Ndk::EntityHandle entity, const Ndk::EntityHandle parent);
+		void AddSkill(const Nz::String luaFunc, const Ndk::EntityHandle entity, const Ndk::EntityHandle parent, Skill::Type type, int level);
 
 		void Update(float delta);
 
@@ -53,4 +67,6 @@ class SkillList : public std::vector<Skill>, public Nz::HandledObject<SkillList>
 	private:
 		Nz::LuaInstance& lua;
 };
+
+#include "Skill.inl"
 #endif
